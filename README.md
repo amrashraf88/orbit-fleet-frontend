@@ -1,4 +1,15 @@
-# vinext-starter
+# ORBIT Fleet Operations
+
+واجهة إدارة أسطول مبنية بـ React 19 وTypeScript، ومقسمة إلى طبقات مستقلة لتسهيل ربط أي REST API.
+
+## API integration
+
+1. Copy `.env.example` to `.env.local`.
+2. Set `NEXT_PUBLIC_API_URL` to the backend base URL.
+3. Set `NEXT_PUBLIC_USE_MOCK_API=false`.
+4. Adapt endpoints or DTO mapping inside `src/services`; UI components remain independent of the backend response shape.
+
+The shared client in `src/lib/api/client.ts` configures JSON requests, cookies, and HTTP errors. Domain types live in `src/types`, services in `src/services`, and loading/error state in hooks.
 
 A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and

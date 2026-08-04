@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./orbit-overrides.css";
 
 export const metadata: Metadata = {
   title: "إنجاز | إدارة الأسطول",

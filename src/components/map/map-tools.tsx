@@ -1,0 +1,2 @@
+import { CarProfile, Crosshair, Cube, Eye, MapPin, Minus, NavigationArrow, Plus, Ruler, Stack } from "@phosphor-icons/react";
+export function MapTools() { const tools = [Stack, Plus, Minus, NavigationArrow, Cube, Crosshair, CarProfile, Eye, MapPin, Ruler]; return <div className="map-tools glass">{tools.map((Icon, i) => <button key={i} className={i === 5 ? "active" : ""} aria-label={`أداة خريطة ${i + 1}`}><Icon size={19} /></button>)}</div>; }
