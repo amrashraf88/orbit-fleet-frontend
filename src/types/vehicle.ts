@@ -12,6 +12,8 @@ export interface Vehicle {
   fuelLevel?: number;
   altitude?: number;
   engineOn?: boolean;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface ApiListResponse<T> {
