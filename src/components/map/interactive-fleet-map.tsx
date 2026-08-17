@@ -16,17 +16,37 @@ const movingRoute: [number, number][] = [
   [24.7210,46.6801],[24.7197,46.6778],[24.7178,46.6759],[24.7157,46.6748],
 ];
 
+const routeWaypoints: [number, number][] = [
+  [24.7136,46.6753],
+  [24.7184,46.6828],
+  [24.7247,46.6894],
+  [24.7189,46.6962],
+];
+
+async function getRoadRoute(signal: AbortSignal): Promise<[number,number][]> {
+  const coordinates = routeWaypoints.map(([lat,lng]) => `${lng},${lat}`).join(";");
+  const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${coordinates}?overview=full&geometries=geojson&steps=false`, {signal});
+  if (!response.ok) throw new Error("تعذر تحميل مسار الطريق");
+  const payload = await response.json() as {routes?: {geometry?: {coordinates?: [number,number][]}}[]};
+  const road = payload.routes?.[0]?.geometry?.coordinates;
+  if (!road?.length) throw new Error("لم يتم العثور على مسار طريق");
+  return road.map(([lng,lat]) => [lat,lng]);
+}
+
 export function InteractiveFleetMap({ vehicles, selectedId, onSelect, zoomCommand }: Props) {
   const hostRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<import("leaflet").Map | null>(null);
   const markersRef = useRef(new Map<string, import("leaflet").Marker>());
   const routeIndexRef = useRef(0);
   const onSelectRef = useRef(onSelect);
+  const selectedIdRef = useRef(selectedId);
   useEffect(() => { onSelectRef.current = onSelect; }, [onSelect]);
+  useEffect(() => { selectedIdRef.current = selectedId; }, [selectedId]);
 
   useEffect(() => {
     let cancelled = false;
     let timer = 0;
+    const controller = new AbortController();
     const markers = markersRef.current;
     async function mountMap() {
       if (!hostRef.current || mapRef.current) return;
@@ -52,25 +72,28 @@ export function InteractiveFleetMap({ vehicles, selectedId, onSelect, zoomComman
       });
       if (bounds.length > 1) map.fitBounds(bounds, {padding:[70,70],maxZoom:12});
 
-      const routeLine = L.polyline(movingRoute, {color:"#25dfd5",weight:4,opacity:.75,dashArray:"8 10"}).addTo(map);
+      let roadRoute = movingRoute;
+      try { roadRoute = await getRoadRoute(controller.signal); } catch { roadRoute = movingRoute; }
+      if (cancelled) return;
+      const routeLine = L.polyline(roadRoute, {color:"#25dfd5",weight:5,opacity:.88,lineCap:"round",lineJoin:"round"}).addTo(map);
       routeLine.bindTooltip("مسار المركبة المتحركة");
       const movingVehicle = vehicles.find((vehicle) => vehicle.state === "moving");
       if (movingVehicle) timer = window.setInterval(() => {
-        routeIndexRef.current = (routeIndexRef.current + 1) % movingRoute.length;
-        const point = movingRoute[routeIndexRef.current];
-        const next = movingRoute[(routeIndexRef.current + 1) % movingRoute.length];
+        routeIndexRef.current = (routeIndexRef.current + 1) % roadRoute.length;
+        const point = roadRoute[routeIndexRef.current];
+        const next = roadRoute[(routeIndexRef.current + 1) % roadRoute.length];
         const marker = markers.get(movingVehicle.id);
         marker?.setLatLng(point);
-        const angle = Math.atan2(next[1]-point[1],next[0]-point[0]) * 180 / Math.PI;
+        const angle = Math.atan2((next[1]-point[1]) * Math.cos(point[0] * Math.PI / 180), next[0]-point[0]) * 180 / Math.PI;
         const car = marker?.getElement()?.querySelector<HTMLElement>(".leaflet-car");
-        if (car) car.style.setProperty("--car-heading", `${90-angle}deg`);
-        if (selectedId === movingVehicle.id) map.panTo(point, {animate:true,duration:1.8});
-      }, 2000);
+        if (car) car.style.setProperty("--car-heading", `${angle}deg`);
+        if (selectedIdRef.current === movingVehicle.id) map.panTo(point, {animate:true,duration:.65});
+      }, 700);
       window.setTimeout(() => map.invalidateSize(), 50);
     }
     mountMap();
-    return () => { cancelled=true; window.clearInterval(timer); mapRef.current?.remove(); mapRef.current=null; markers.clear(); };
-  }, [vehicles, selectedId]);
+    return () => { cancelled=true; controller.abort(); window.clearInterval(timer); mapRef.current?.remove(); mapRef.current=null; markers.clear(); };
+  }, [vehicles]);
 
   useEffect(() => {
     if (!selectedId) return;
