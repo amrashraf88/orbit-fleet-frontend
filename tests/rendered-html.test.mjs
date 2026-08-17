@@ -9,15 +9,13 @@ async function render() {
   return worker.fetch(new Request("http://localhost/", { headers: { accept: "text/html" } }), { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } }, { waitUntil() {}, passThroughOnException() {} });
 }
 
-test("server-renders the ORBIT fleet dashboard", async () => {
+test("server-renders the protected ORBIT application shell", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   const html = await response.text();
   assert.match(html, /<title>إنجاز \| إدارة الأسطول<\/title>/i);
-  assert.match(html, /ORBIT/);
-  assert.match(html, /الخريطة الحية/);
-  assert.match(html, /المركبات/);
+  assert.match(html, /جارٍ تحميل المنصة/);
   assert.match(html, /dir="rtl"/);
   assert.doesNotMatch(html, /codex-preview|Building your site/);
 });
