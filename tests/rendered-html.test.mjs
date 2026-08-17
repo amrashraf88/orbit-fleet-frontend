@@ -29,7 +29,8 @@ test("keeps API integration isolated from UI components", async () => {
   ]);
   assert.match(page, /LiveMapPage/);
   assert.doesNotMatch(page, /fetch\(|mockVehicles|NEXT_PUBLIC_API_URL/);
-  assert.match(service, /apiClient<ApiListResponse<Vehicle>>/);
+  assert.match(service, /apiClient<ApiListResponse<ApiVehicle>>/);
+  assert.match(service, /state\?\.toLowerCase\(\)/);
   assert.match(client, /class ApiError/);
   assert.match(environment, /NEXT_PUBLIC_USE_MOCK_API=true/);
   await access(new URL("../src/types/vehicle.ts", import.meta.url));

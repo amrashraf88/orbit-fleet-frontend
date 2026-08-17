@@ -12,7 +12,8 @@ export type PageId =
   | "cameras"
   | "maintenance"
   | "fuel"
-  | "reports";
+  | "reports"
+  | "settings";
 
 export interface NavigationItem {
   id: PageId;

@@ -5,5 +5,5 @@ export interface EntityRecord { id: string; name: string; details: string; updat
 export type EntityStore = Record<PageId, EntityRecord[]>;
 
 export type FieldType = "text" | "email" | "tel" | "number" | "date" | "datetime-local" | "textarea" | "select" | "checkbox" | "color";
-export interface EntityField { key: string; label: string; type: FieldType; placeholder?: string; required?: boolean; options?: { label: string; value: string }[]; wide?: boolean }
+export interface EntityField { key: string; label: string; type: FieldType; placeholder?: string; required?: boolean; options?: { label: string; value: string }[]; optionCategory?: string; wide?: boolean }
 export interface EntityFormSchema { singular: string; primaryKey: string; secondaryKey: string; fields: EntityField[] }

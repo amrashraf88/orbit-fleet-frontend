@@ -78,7 +78,7 @@ export function AnalyticsPage() {
       <article className="analytics-card vehicles-performance">
         <CardHeader icon={CarProfile} title="أداء المركبات" caption="الأعلى نشاطًا اليوم" action="كل المركبات"/>
         <div className="performance-head"><span>المركبة</span><span>المسافة</span><span>السرعة</span><span>الوقود</span></div>
-        {vehicles.slice(0,4).map((vehicle) => <div className="performance-row" key={vehicle.id}><div><i className={`vehicle-state ${vehicle.state}`}/><span><b>{vehicle.name}</b><small>{vehicle.id}</small></span></div><strong>{vehicle.speed ? vehicle.speed * 8 : 24} كم</strong><strong>{vehicle.speed} كم/س</strong><div className="mini-progress"><i style={{width:`${vehicle.fuelLevel ?? 0}%`}}/><span>{vehicle.fuelLevel ?? 0}%</span></div></div>)}
+        {vehicles.slice(0,4).map((vehicle) => <div className="performance-row" key={vehicle.id}><div><i className={`vehicle-state ${vehicle.state}`}/><span><b>{vehicle.name}</b><small>{vehicle.plateNumber ?? vehicle.id}</small></span></div><strong>{vehicle.speed ? vehicle.speed * 8 : 24} كم</strong><strong>{vehicle.speed} كم/س</strong><div className="mini-progress"><i style={{width:`${vehicle.fuelLevel ?? 0}%`}}/><span>{vehicle.fuelLevel ?? 0}%</span></div></div>)}
       </article>
     </section>
   </div>;

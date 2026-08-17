@@ -1,7 +1,8 @@
-export type VehicleState = "moving" | "idle" | "stopped" | "online";
+export type VehicleState = "moving" | "idle" | "stopped" | "online" | "offline";
 
 export interface Vehicle {
   id: string;
+  plateNumber?: string;
   name: string;
   group: string;
   speed: number;

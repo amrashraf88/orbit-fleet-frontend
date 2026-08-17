@@ -14,4 +14,5 @@ export const initialEntityData: EntityStore = {
   maintenance: rows("MNT", ["تغيير زيت 2414|مكتمل", "فحص دوري 2447|غدًا", "إطارات 7926|متأخر"]),
   fuel: rows("FUL", ["تعبئة 2414|42 لتر", "تعبئة 2447|35 لتر", "استهلاك غير طبيعي|7926 BXA"]),
   reports: rows("RPT", ["تقرير التشغيل اليومي|PDF", "تقرير الوقود الشهري|Excel", "تقرير المخالفات|PDF"]),
+  settings: [],
 };
