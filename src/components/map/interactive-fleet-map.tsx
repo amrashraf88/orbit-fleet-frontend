@@ -98,7 +98,11 @@ export function InteractiveFleetMap({ vehicles, selectedId, onSelect, zoomComman
   useEffect(() => {
     if (!selectedId) return;
     const marker = markersRef.current.get(selectedId);
-    if (marker && mapRef.current) { mapRef.current.flyTo(marker.getLatLng(), 16, {duration:1.1}); marker.openTooltip(); }
+    if (marker && mapRef.current) {
+      marker.setZIndexOffset(1000);
+      mapRef.current.flyTo(marker.getLatLng(), 18, {duration:1.35, easeLinearity:.2});
+      window.setTimeout(() => marker.openTooltip(), 650);
+    }
   }, [selectedId]);
 
   useEffect(() => { if (!mapRef.current || zoomCommand === 0) return; if (zoomCommand > 0) mapRef.current.zoomIn(); else mapRef.current.zoomOut(); }, [zoomCommand]);
